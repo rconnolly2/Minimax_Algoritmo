@@ -15,10 +15,13 @@ class Juego:
         self.titulo_ventana = titulo_ventana
         self.dimensiones = dimensiones_ventana
         self.running = True
+        self.turno_jugador = True
         self.dimensiones_cuadro = dimensiones_ventana[0]/3
         self.cuadro = [["x", "0", "0"],
                        ["0", "o", "0"],
                        ["0", "0", "0"]]
+        #Lista de coordenadas x, y de cada cuadro
+        self.cuadros_lista = []
 
 
     def Inicio_Pygame(self):
@@ -37,6 +40,21 @@ class Juego:
         #Creando Cuadricula
         self.Crear_Cuadricula()
         self.Imprimir_Tabla()
+        self.Crear_Cuadros_Lista(self.cuadros_lista)
+
+
+    def Crear_Cuadros_Lista(self, lista_coordenadas: list):
+        """
+        lista_cordenadas => La lista que queremos rellenar de coordeandas [x, y] de cada cuadro en nuestro juego tetris
+        """
+        x = 0
+        y = 0
+        for alto in range(3):
+            for ancho in range(3):
+                lista_coordenadas.append([int(x), int(y)]) # Añadimos coordeandas de cada cuadro x y x a nuestra lista
+                x = x+self.dimensiones_cuadro # Añadimos en cada ciclo a x dimensiones de cada cuadro
+            x = 0 # Al finalizar ir horizontalmente y pasamos a la siguiente linea verticalmente x = 0
+            y = y+self.dimensiones_cuadro #Al finalizar ir hotizontalemnte pasamos a la siguiente linea vertical
 
     def Crear_Cuadricula(self):
         #Crear Cuadro
@@ -78,8 +96,36 @@ class Juego:
             pos_raton = pygame.mouse.get_pos()
             return pos_raton
 
-    def Raton_Dentro(self):
-        None
+    def Raton_Dentro(self, cordenadas_cuadros_lista: list):
+        """
+        Esta funcion se encarga de procesar las cordenadas x, y del raton y de cada cuadro de la lista => cordenadas_cuadros_lista
+        y comprobamos si hay colision entre el raton => y cada cuadro utilizando el algo (Bounding Box collision)
+
+        cordenadas_cuadros_lista => La lista de listas con dos int ejemplo (2x2): [[0, 0], [166, 0], [0, 166], [166, 166]]
+
+        """
+        x_raton = None
+        y_raton = None
+        for i in range(9):
+            # Si la funcion Detector_raton tiene x, y dentro de su tuple 
+            # (solo en caso que se clique el boton izquierdo del raton) => guardamos en 2 variables
+            if not (self.Detectar_Raton() == None):
+                coordeandas_raton = self.Detectar_Raton()
+                print(coordeandas_raton)
+                x_raton = coordeandas_raton[0]
+                y_raton = coordeandas_raton[1]
+
+            # Comprobamos colision bounding box https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
+            x_cuadro, y_cuadro = cordenadas_cuadros_lista[i]
+            if (not x_raton == None) and (not y_raton == None):
+                #Colision x raton => cuadro
+                if (x_raton >= x_cuadro) and (x_cuadro + int(self.dimensiones_cuadro) >= x_raton):
+                    #Colision y raton => cuadro
+                    if (y_raton >= y_cuadro) and (y_cuadro + int(self.dimensiones_cuadro >= y_raton)):
+                        return x_cuadro, y_cuadro # En caso de colison x, y 
+                        #La funcion devolvera x, y del cuadro colisionado
+
+        
 
 
     def Bucle_Juego(self):
@@ -90,8 +136,8 @@ class Juego:
                 if evento.type == pygame.QUIT:
                     self.running = False
 
-            #Aqui debajo va el codigo del bucle del juego
-            print(self.Detectar_Raton())
+            #Aqui debajo va el codigo del bucle del juego:
+            self.Raton_Dentro(self.cuadros_lista)
 
 
 
