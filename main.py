@@ -52,9 +52,9 @@ class Juego:
         for alto in range(3):
             for ancho in range(3):
                 lista_coordenadas.append([int(x), int(y)]) # Añadimos coordeandas de cada cuadro x y x a nuestra lista
-                x = x+self.dimensiones_cuadro # Añadimos en cada ciclo a x dimensiones de cada cuadro
+                x = x+int(self.dimensiones_cuadro) # Añadimos en cada ciclo a x dimensiones de cada cuadro
             x = 0 # Al finalizar ir horizontalmente y pasamos a la siguiente linea verticalmente x = 0
-            y = y+self.dimensiones_cuadro #Al finalizar ir hotizontalemnte pasamos a la siguiente linea vertical
+            y = y+int(self.dimensiones_cuadro) #Al finalizar ir hotizontalemnte pasamos a la siguiente linea vertical
 
     def Crear_Cuadricula(self):
         #Crear Cuadro
@@ -114,7 +114,7 @@ class Juego:
                 print(coordeandas_raton)
                 x_raton = coordeandas_raton[0]
                 y_raton = coordeandas_raton[1]
-
+                
             # Comprobamos colision bounding box https://learnopengl.com/In-Practice/2D-Game/Collisions/Collision-detection
             x_cuadro, y_cuadro = cordenadas_cuadros_lista[i]
             if (not x_raton == None) and (not y_raton == None):
@@ -122,10 +122,32 @@ class Juego:
                 if (x_raton >= x_cuadro) and (x_cuadro + int(self.dimensiones_cuadro) >= x_raton):
                     #Colision y raton => cuadro
                     if (y_raton >= y_cuadro) and (y_cuadro + int(self.dimensiones_cuadro >= y_raton)):
-                        return x_cuadro, y_cuadro # En caso de colison x, y 
+                        return int(x_cuadro), int(y_cuadro) # En caso de colison x, y 
                         #La funcion devolvera x, y del cuadro colisionado
 
-        
+    def Turno_Jugador(self):
+
+        if (self.turno_jugador == True) and (not self.Detectar_Raton() == None):
+            x_cuadro, y_cuadro = self.Raton_Dentro(self.cuadros_lista)
+            ancho = 0
+            alto = 0
+            print(self.cuadros_lista)
+            for i in range(3):
+                for a in range(3):
+                    if (ancho == x_cuadro) and (alto == y_cuadro):
+                        print(self.cuadro)
+                        #Dibujamos circulo
+                        self.cuadro[i][a] = "o"
+                        #print("Dibujando en: " + str(alto) + str(y_cuadro))
+
+                    ancho = ancho+int(self.dimensiones_cuadro)
+
+                ancho = 0
+                alto = alto+int(self.dimensiones_cuadro)
+
+
+
+
 
 
     def Bucle_Juego(self):
@@ -138,6 +160,7 @@ class Juego:
 
             #Aqui debajo va el codigo del bucle del juego:
             self.Raton_Dentro(self.cuadros_lista)
+            self.Turno_Jugador()
 
 
 
