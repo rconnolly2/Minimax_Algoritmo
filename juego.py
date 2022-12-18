@@ -183,18 +183,8 @@ class Juego:
                     self.running = False
 
             #Aqui debajo va el codigo del bucle del juego:
-            self.Raton_Dentro(self.cuadros_lista)
             self.Turno_Jugador()
             self.Imprimir_Tabla()
             pygame.display.flip()
 
             self.Quien_Gana()
-
-
-
-
-Tetris = Juego((255, 255, 0), ("Mi juego de tetris"), (500, 500))
-
-Tetris.Inicio_Pygame()
-
-Tetris.Bucle_Juego()
