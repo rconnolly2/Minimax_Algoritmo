@@ -147,7 +147,31 @@ class Juego:
 
 
 
+    def Quien_Gana(self):
+        """
+        Esta funcion decide si jugador gana en caso que gane dice por termianl que Jugador a ganado y cierra juego
+        """
+        for h in range(3):
+            #Horizontal
+            if str(self.cuadro[h][0] + self.cuadro[h][1] + self.cuadro[h][2]) == "ooo":
+                print("Gana jugador!")
+                self.running = False
 
+            #Vertical
+            for w in range(3):
+                if str(self.cuadro[0][w] + self.cuadro[1][w] + self.cuadro[2][w]) == "ooo":
+                    print("Gana Jugador!")
+                    self.running = False
+
+        #Horizontal izquierda-derecha:
+        if str(self.cuadro[0][0] + self.cuadro[1][1] + self.cuadro[2][2]) == "ooo":
+            print("Gana Jugador!")
+            self.running = False
+
+        #Horizontal derecha-izquierda:
+        if str(self.cuadro[2][0] + self.cuadro[1][1] + self.cuadro[0][2]) == "ooo":
+            print("Gana Jugador!")
+            self.running = False
 
 
     def Bucle_Juego(self):
@@ -163,6 +187,8 @@ class Juego:
             self.Turno_Jugador()
             self.Imprimir_Tabla()
             pygame.display.flip()
+
+            self.Quien_Gana()
 
 
 
