@@ -1,5 +1,4 @@
 import pygame
-import cv2
 
 
 class Juego:
@@ -16,7 +15,7 @@ class Juego:
         self.dimensiones = dimensiones_ventana
         self.running = True
         self.turno_jugador = True
-        self.dimensiones_cuadro = dimensiones_ventana[0]/3
+        self.dimensiones_cuadro = int(dimensiones_ventana[0]/3)
         self.cuadro = [["x", "0", "0"],
                        ["0", "o", "0"],
                        ["0", "0", "0"]]
@@ -75,19 +74,19 @@ class Juego:
         suma_down = pygame.Rect(((ancho+82)-50), alto+65, 100, 30)
 
         for i in range(3):
+
             for a in range(3):
-                print(self.cuadro[a][i])
                 #Comprobamos que si en caso que en la lista sea x pintamos x si es circulo circulo :
-                if (self.cuadro[a][i] == "x"):
+                if (self.cuadro[i][a] == "x"):
                     pygame.draw.rect(self.pantalla, (255, 0, 0), suma_up)
                     pygame.draw.rect(self.pantalla, (255, 0, 0), suma_down)
-                elif (self.cuadro[a][i] == "o"):
+                elif (self.cuadro[i][a] == "o"):
                     pygame.draw.circle(self.pantalla, (255, 0, 0), (ancho+82, alto+82), 30, 3)
 
-                ancho = ancho+self.dimensiones_cuadro+1
+                ancho = ancho+self.dimensiones_cuadro
 
             ancho = 0
-            alto = alto+self.dimensiones_cuadro+1
+            alto = alto+self.dimensiones_cuadro
 
     def Detectar_Raton(self):
         botones_ratones = pygame.mouse.get_pressed(num_buttons=3)
@@ -111,7 +110,7 @@ class Juego:
             # (solo en caso que se clique el boton izquierdo del raton) => guardamos en 2 variables
             if not (self.Detectar_Raton() == None):
                 coordeandas_raton = self.Detectar_Raton()
-                print(coordeandas_raton)
+
                 x_raton = coordeandas_raton[0]
                 y_raton = coordeandas_raton[1]
                 
@@ -121,29 +120,30 @@ class Juego:
                 #Colision x raton => cuadro
                 if (x_raton >= x_cuadro) and (x_cuadro + int(self.dimensiones_cuadro) >= x_raton):
                     #Colision y raton => cuadro
-                    if (y_raton >= y_cuadro) and (y_cuadro + int(self.dimensiones_cuadro >= y_raton)):
+                    if (y_raton >= y_cuadro) and (y_cuadro + int(self.dimensiones_cuadro) >= y_raton):
                         return int(x_cuadro), int(y_cuadro) # En caso de colison x, y 
                         #La funcion devolvera x, y del cuadro colisionado
 
     def Turno_Jugador(self):
 
         if (self.turno_jugador == True) and (not self.Detectar_Raton() == None):
-            x_cuadro, y_cuadro = self.Raton_Dentro(self.cuadros_lista)
+            #Si es el turno del jugador y el raton a dado click izquierdo:
+            x_cuadro, y_cuadro = self.Raton_Dentro(self.cuadros_lista) # Cogemos posicion x, y del raton (EN QUE CUADRO ESTA NO LA POSICION EXACTA)
             ancho = 0
             alto = 0
-            print(self.cuadros_lista)
+
             for i in range(3):
                 for a in range(3):
-                    if (ancho == x_cuadro) and (alto == y_cuadro):
-                        print(self.cuadro)
-                        #Dibujamos circulo
-                        self.cuadro[i][a] = "o"
-                        #print("Dibujando en: " + str(alto) + str(y_cuadro))
+                    if (ancho == x_cuadro) and (alto == y_cuadro) and (self.cuadro[i][a] == "0"):
+                        # Si la posicion x, y del raton y del cuadro son la misma (y el cuadro vacio es un => 0)
+                        #Pintamos un circulo
 
-                    ancho = ancho+int(self.dimensiones_cuadro)
+                        self.cuadro[i][a] = "o"
+
+                    ancho = ancho+self.dimensiones_cuadro
 
                 ancho = 0
-                alto = alto+int(self.dimensiones_cuadro)
+                alto = alto+self.dimensiones_cuadro
 
 
 
@@ -161,6 +161,8 @@ class Juego:
             #Aqui debajo va el codigo del bucle del juego:
             self.Raton_Dentro(self.cuadros_lista)
             self.Turno_Jugador()
+            self.Imprimir_Tabla()
+            pygame.display.flip()
 
 
 
