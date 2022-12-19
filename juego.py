@@ -57,7 +57,7 @@ class Juego:
 
     def MejorJugada(self, cuadro):
 
-        mejor_puntuacion = -1000
+        mejor_puntuacion = 0
         mejor_jugada = [0, 0]
 
         for alto in range(3):
