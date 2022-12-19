@@ -1,5 +1,5 @@
 import pygame
-
+from minimax import Minimax
 
 class Juego:
     def __init__(self, color_fondo: tuple, titulo_ventana: str, dimensiones_ventana: tuple):
@@ -21,7 +21,7 @@ class Juego:
                        ["0", "0", "0"]]
         #Lista de coordenadas x, y de cada cuadro
         self.cuadros_lista = []
-
+        self.minimax = Minimax()
 
     def Inicio_Pygame(self):
         # titulo de ventana
@@ -78,9 +78,11 @@ class Juego:
             for a in range(3):
                 #Comprobamos que si en caso que en la lista sea x pintamos x si es circulo circulo :
                 if (self.cuadro[i][a] == "x"):
+                    suma_up = pygame.Rect(((ancho+82)-15), alto+30, 30, 100)
+                    suma_down = pygame.Rect(((ancho+82)-50), alto+65, 100, 30)
                     pygame.draw.rect(self.pantalla, (255, 0, 0), suma_up)
                     pygame.draw.rect(self.pantalla, (255, 0, 0), suma_down)
-                elif (self.cuadro[i][a] == "o"):
+                if (self.cuadro[i][a] == "o"):
                     pygame.draw.circle(self.pantalla, (255, 0, 0), (ancho+82, alto+82), 30, 3)
 
                 ancho = ancho+self.dimensiones_cuadro
@@ -139,6 +141,7 @@ class Juego:
                         #Pintamos un circulo
 
                         self.cuadro[i][a] = "o"
+                        self.minimax.MejorJugada(self.cuadro)
 
                     ancho = ancho+self.dimensiones_cuadro
 
@@ -151,27 +154,60 @@ class Juego:
         """
         Esta funcion decide si jugador gana en caso que gane dice por termianl que Jugador a ganado y cierra juego
         """
+        lista_valores = []
         for h in range(3):
-            #Horizontal
+            
+            #Horizontal jugador "o"
             if str(self.cuadro[h][0] + self.cuadro[h][1] + self.cuadro[h][2]) == "ooo":
-                print("Gana jugador!")
-                self.running = False
+                print("Gana jugador o!")
+                return -1
+            #Horizontal jugador "x"
+            if str(self.cuadro[h][0] + self.cuadro[h][1] + self.cuadro[h][2]) == "xxx":
+                print("Gana jugador x!")
+                return 1
 
-            #Vertical
+            #Vertical jugador "o"
             for w in range(3):
                 if str(self.cuadro[0][w] + self.cuadro[1][w] + self.cuadro[2][w]) == "ooo":
-                    print("Gana Jugador!")
-                    self.running = False
+                    print("Gana Jugador o!")
+                    return -1
+                if str(self.cuadro[0][w] + self.cuadro[1][w] + self.cuadro[2][w]) == "xxx":
+                    print("Gana jugador x!")
+                    return 1
 
-        #Horizontal izquierda-derecha:
+
+
+        #Horizontal izquierda-derecha "o":
         if str(self.cuadro[0][0] + self.cuadro[1][1] + self.cuadro[2][2]) == "ooo":
-            print("Gana Jugador!")
-            self.running = False
+            print("Gana Jugador o!")
+            return -1
 
-        #Horizontal derecha-izquierda:
+
+        #Horizontal derecha-izquierda "o":
         if str(self.cuadro[2][0] + self.cuadro[1][1] + self.cuadro[0][2]) == "ooo":
-            print("Gana Jugador!")
-            self.running = False
+            print("Gana Jugador o!")
+            return -1
+
+        #Horizontal izquierda-derecha "x":
+        if str(self.cuadro[0][0] + self.cuadro[1][1] + self.cuadro[2][2]) == "xxx":
+            print("Gana jugador x!")
+            return 1
+
+
+        #Horizontal derecha-izquierda "x":
+        if str(self.cuadro[2][0] + self.cuadro[1][1] + self.cuadro[0][2]) == "xxx":
+            print("Gana jugador x!")
+            return 1
+
+        #Añadimos cada elemento a nuestra lista 
+        #para comprobar luego si NO hay 0 == hay empate:
+        for alto in range(3):
+            for ancho in range(3):
+                lista_valores.append(self.cuadro[alto][ancho])
+        # Comprobar si NO HAY MAS "0"
+        if lista_valores.count("0") == 0:
+            print("Empate!")
+            return 0
 
 
     def Bucle_Juego(self):
@@ -183,8 +219,21 @@ class Juego:
                     self.running = False
 
             #Aqui debajo va el codigo del bucle del juego:
+
             self.Turno_Jugador()
             self.Imprimir_Tabla()
             pygame.display.flip()
+            print(self.cuadro)
+            #Comprobamos quien gana y paramos juego
+            # 1 = Gana jugador, -1 = Gana maquina, 0 = Empate
+            if (self.Quien_Gana() == 0 or self.Quien_Gana() == 1 or self.Quien_Gana() == -1):
+                self.running = False
 
-            self.Quien_Gana()
+
+
+Tetris = Juego((255, 255, 0), ("Mi juego de tetris"), (500, 500))
+algo = Minimax()
+
+Tetris.Inicio_Pygame()
+Tetris.Bucle_Juego()
+algo.MejorJugada(Tetris.cuadro)
