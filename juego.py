@@ -15,22 +15,22 @@ class Juego:
         self.running = True
         self.turno_jugador = True
         self.dimensiones_cuadro = int(dimensiones_ventana[0]/3)
-        self.cuadro = [["x", "0", "0"],
-                       ["0", "0", "0"],
-                       ["0", "0", "0"]]
+        self.cuadro = [["x", "o", "x"],
+                       ["0", "o", "x"],
+                       ["0", "0", "o"]]
         #Lista de coordenadas x, y de cada cuadro
         self.cuadros_lista = []
 
     def minimax(self, cuadro, EstaMaximizando):
-        if self.Quien_Gana(cuadro) == 1:
+        if self.Quien_Gana(cuadro) == 1: #base case
             return 1
-        elif self.Quien_Gana(cuadro) == -1:
+        elif self.Quien_Gana(cuadro) == -1: #base case
             return -1
-        elif self.Quien_Gana(cuadro) == 0:
+        elif self.Quien_Gana(cuadro) == 0: #base case
             return 0
 
         if EstaMaximizando:
-            mejor_puntuacion = -800
+            mejor_puntuacion = -1
             for alto in range(3):
                 for ancho in range(3):
                     if cuadro[alto][ancho] == "0":
@@ -41,7 +41,7 @@ class Juego:
                             mejor_puntuacion = puntuacion
             return mejor_puntuacion
         else:
-            mejor_puntuacion = 800
+            mejor_puntuacion = 1
             for alto in range(3):
                 for ancho in range(3):
                     if cuadro[alto][ancho] == "0":
@@ -57,17 +57,18 @@ class Juego:
 
     def MejorJugada(self, cuadro):
 
-        mejor_puntuacion = -800
+        mejor_puntuacion = -1000
         mejor_jugada = [0, 0]
 
         for alto in range(3):
             for ancho in range(3):
                 if cuadro[alto][ancho] == "0":
-                    cuadro[alto][ancho] = "x"
-                    puntuacion = self.minimax(cuadro, False)
+                    cuadro[alto][ancho] = "x" #Pongo x 1º vez asignado "x" como max y "o" como min
+                    puntuacion = self.minimax(cuadro, False) #Ejecuto la funcion recursiva siguiente es de "o" y es min => maximizando = False
                     cuadro[alto][ancho] = "0"
                     if puntuacion > mejor_puntuacion:
                         mejor_puntuacion = puntuacion
+                        print(str(mejor_puntuacion))
                         mejor_jugada = [alto, ancho]
 
         cuadro[mejor_jugada[0]][mejor_jugada[1]] = "x" #El mejor movimiento
@@ -258,7 +259,7 @@ class Juego:
             for ancho in range(3):
                 lista_valores.append(cuadro[alto][ancho])
         # Comprobar si NO HAY MAS "0"
-        if lista_valores.count("0") == 1:
+        if lista_valores.count("0") == 0:
             print("Empate!")
             return 0
 
