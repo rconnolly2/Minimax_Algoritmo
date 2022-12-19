@@ -1,4 +1,4 @@
-
+from juego import Juego
 
 
 
@@ -10,6 +10,7 @@ class Minimax:
         return 1
 
     def MejorJugada(self, cuadro):
+        puntuacion = self.Quien_Gana()
         mejor_puntuacion = 0
         jugada = None
         for alto in range(3):
@@ -25,7 +26,6 @@ class Minimax:
                         jugada = [alto, ancho]
 
         cuadro[jugada[0]][jugada[1]] = "x"
-        print("maquina mueve")
 
 
 

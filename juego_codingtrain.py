@@ -15,66 +15,68 @@ class Juego:
         self.running = True
         self.turno_jugador = True
         self.dimensiones_cuadro = int(dimensiones_ventana[0]/3)
-        self.cuadro = [["x", "0", "0"],
-                       ["0", "0", "0"],
+        self.cuadro = [["x", "o", "o"],
+                       ["x", "x", "0"],
                        ["0", "0", "0"]]
         #Lista de coordenadas x, y de cada cuadro
         self.cuadros_lista = []
 
-    def minimax(self, cuadro, EstaMaximizando):
-        if self.Quien_Gana(cuadro) == 1:
-            return 1
-        elif self.Quien_Gana(cuadro) == -1:
-            return -1
-        elif self.Quien_Gana(cuadro) == 0:
-            return 0
+    def minimax(self, cuadro, profundidad, EstaMaximizando):
+        mejor_puntuacion = 0
 
-        if EstaMaximizando:
-            mejor_puntuacion = -800
-            for alto in range(3):
-                for ancho in range(3):
-                    if cuadro[alto][ancho] == "0":
-                        cuadro[alto][ancho] = "x"
-                        puntuacion = self.minimax(cuadro, False)
-                        cuadro[alto][ancho] = "0"
+        #Si una instancia de la funcion minimax encuentra que un jugador
+        #gana o hay un empate devuelve ese analisis
+        resultado = self.Quien_Gana()
+    
+        if (not resultado == None):
+            puntuacion = resultado
+            return puntuacion
+
+        if EstaMaximizando == True:
+            for i in range(3):
+                for j in range(3):
+                    #¿Esta disponible?
+                    if cuadro[i][j] == "0":
+                        cuadro[i][j] == "x"
+                        print(profundidad)
+                        puntuacion = self.minimax(cuadro, profundidad+1, False)
+                        cuadro[i][j] == "0"
                         if puntuacion > mejor_puntuacion:
                             mejor_puntuacion = puntuacion
+
             return mejor_puntuacion
         else:
-            mejor_puntuacion = 800
-            for alto in range(3):
-                for ancho in range(3):
-                    if cuadro[alto][ancho] == "0":
-                        cuadro[alto][ancho] = "o"
-                        puntuacion = self.minimax(cuadro, True)
-                        cuadro[alto][ancho] = "0"
+            for i in range(3):
+                for j in range(3):
+                    #¿Esta disponible?
+                    if cuadro[i][j] == "0":
+                        cuadro[i][j] == "o"
+                        print(profundidad)
+                        puntuacion = self.minimax(cuadro, profundidad+1, True)
+                        cuadro[i][j] == "0"
                         if puntuacion < mejor_puntuacion:
                             mejor_puntuacion = puntuacion
+
             return mejor_puntuacion
-
-
                         
 
     def MejorJugada(self, cuadro):
 
-        mejor_puntuacion = -800
-        mejor_jugada = [0, 0]
-
+        mejor_puntuacion = 0
+        jugada = None
         for alto in range(3):
             for ancho in range(3):
-                if cuadro[alto][ancho] == "0":
+                #¿Espacio esta disponible?:
+                if (cuadro[alto][ancho] == "0"):
                     cuadro[alto][ancho] = "x"
-                    puntuacion = self.minimax(cuadro, False)
+                    puntuacion = self.minimax(cuadro, 0, False)
+                    #Revertimos
                     cuadro[alto][ancho] = "0"
                     if puntuacion > mejor_puntuacion:
                         mejor_puntuacion = puntuacion
-                        mejor_jugada = [alto, ancho]
+                        jugada = [alto, ancho]
 
-        cuadro[mejor_jugada[0]][mejor_jugada[1]] = "x" #El mejor movimiento
-        return
-
-
-
+        cuadro[jugada[0]][jugada[1]] = "x"
 
     def Inicio_Pygame(self):
         # titulo de ventana
@@ -203,7 +205,7 @@ class Juego:
 
 
 
-    def Quien_Gana(self, cuadro):
+    def Quien_Gana(self):
         """
         Esta funcion decide si jugador gana en caso que gane dice por termianl que Jugador a ganado y cierra juego
         """
@@ -211,44 +213,44 @@ class Juego:
         for h in range(3):
             
             #Horizontal jugador "o"
-            if str(cuadro[h][0] + cuadro[h][1] + cuadro[h][2]) == "ooo":
+            if str(self.cuadro[h][0] + self.cuadro[h][1] + self.cuadro[h][2]) == "ooo":
                 print("Gana jugador o!")
                 return -1
             #Horizontal jugador "x"
-            if str(cuadro[h][0] + cuadro[h][1] + cuadro[h][2]) == "xxx":
+            if str(self.cuadro[h][0] + self.cuadro[h][1] + self.cuadro[h][2]) == "xxx":
                 print("Gana jugador x!")
                 return 1
 
             #Vertical jugador "o"
             for w in range(3):
-                if str(cuadro[0][w] + cuadro[1][w] + cuadro[2][w]) == "ooo":
+                if str(self.cuadro[0][w] + self.cuadro[1][w] + self.cuadro[2][w]) == "ooo":
                     print("Gana Jugador o!")
                     return -1
-                if str(cuadro[0][w] + cuadro[1][w] + cuadro[2][w]) == "xxx":
+                if str(self.cuadro[0][w] + self.cuadro[1][w] + self.cuadro[2][w]) == "xxx":
                     print("Gana jugador x!")
                     return 1
 
 
 
         #Horizontal izquierda-derecha "o":
-        if str(cuadro[0][0] + cuadro[1][1] + cuadro[2][2]) == "ooo":
+        if str(self.cuadro[0][0] + self.cuadro[1][1] + self.cuadro[2][2]) == "ooo":
             print("Gana Jugador o!")
             return -1
 
 
         #Horizontal derecha-izquierda "o":
-        if str(cuadro[2][0] + cuadro[1][1] + cuadro[0][2]) == "ooo":
+        if str(self.cuadro[2][0] + self.cuadro[1][1] + self.cuadro[0][2]) == "ooo":
             print("Gana Jugador o!")
             return -1
 
         #Horizontal izquierda-derecha "x":
-        if str(cuadro[0][0] + cuadro[1][1] + cuadro[2][2]) == "xxx":
+        if str(self.cuadro[0][0] + self.cuadro[1][1] + self.cuadro[2][2]) == "xxx":
             print("Gana jugador x!")
             return 1
 
 
         #Horizontal derecha-izquierda "x":
-        if str(cuadro[2][0] + cuadro[1][1] + cuadro[0][2]) == "xxx":
+        if str(self.cuadro[2][0] + self.cuadro[1][1] + self.cuadro[0][2]) == "xxx":
             print("Gana jugador x!")
             return 1
 
@@ -256,7 +258,7 @@ class Juego:
         #para comprobar luego si NO hay 0 == hay empate:
         for alto in range(3):
             for ancho in range(3):
-                lista_valores.append(cuadro[alto][ancho])
+                lista_valores.append(self.cuadro[alto][ancho])
         # Comprobar si NO HAY MAS "0"
         if lista_valores.count("0") == 1:
             print("Empate!")
@@ -278,8 +280,8 @@ class Juego:
             pygame.display.flip()
             print(self.cuadro)
             #Comprobamos quien gana y paramos juego
-            # -1 = Gana jugador, 1 = Gana maquina, 0 = Empate
-            ganador = self.Quien_Gana(self.cuadro)
+            # 1 = Gana jugador, -1 = Gana maquina, 0 = Empate
+            ganador = self.Quien_Gana()
             if (ganador == 0 or ganador == 1 or ganador == -1):
                 self.running = False
 
