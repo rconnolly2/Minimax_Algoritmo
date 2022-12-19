@@ -30,7 +30,7 @@ class Juego:
             return 0
 
         if EstaMaximizando:
-            mejor_puntuacion = -1
+            mejor_puntuacion = -1000
             for alto in range(3):
                 for ancho in range(3):
                     if cuadro[alto][ancho] == "0":
@@ -41,7 +41,7 @@ class Juego:
                             mejor_puntuacion = puntuacion
             return mejor_puntuacion
         else:
-            mejor_puntuacion = 1
+            mejor_puntuacion = 1000
             for alto in range(3):
                 for ancho in range(3):
                     if cuadro[alto][ancho] == "0":
