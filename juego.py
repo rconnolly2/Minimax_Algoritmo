@@ -16,8 +16,8 @@ class Juego:
         self.turno_jugador = True
         self.dimensiones_cuadro = int(dimensiones_ventana[0]/3)
         self.cuadro = [["x", "o", "x"],
-                       ["0", "o", "x"],
-                       ["0", "0", "o"]]
+                       ["0", "0", "0"],
+                       ["0", "0", "0"]]
         #Lista de coordenadas x, y de cada cuadro
         self.cuadros_lista = []
 
